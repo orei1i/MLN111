@@ -1,0 +1,133 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-be-vietnam), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-playfair), Georgia, "Times New Roman", serif;
+}
+
+/*
+ * Palette: ink (nền), paper (chữ), gold = Cung (lý thuyết),
+ * crimson = Cầu (thực tiễn), jade = năng lượng / chuyển hóa.
+ */
+@theme {
+  --color-ink-950: #100b09;
+  --color-ink-900: #19120f;
+  --color-ink-800: #241a15;
+  --color-ink-700: #33261f;
+  --color-ink-600: #4a382e;
+
+  --color-paper: #f4ead6;
+  --color-paper-dim: #cbbfa8;
+  --color-muted: #948673;
+
+  --color-gold-300: #f2d58c;
+  --color-gold-400: #e3b957;
+  --color-gold-500: #c99a2e;
+
+  --color-crimson-400: #e2524b;
+  --color-crimson-500: #c8322f;
+  --color-crimson-600: #a02522;
+
+  --color-jade-400: #62b79b;
+  --color-jade-500: #3f9a7d;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  background-color: var(--color-ink-950);
+  color: var(--color-paper);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Hai mặt đối lập chiếu sáng hai góc trang: vàng bên trái, đỏ bên phải. */
+.scene {
+  background:
+    radial-gradient(900px 520px at 0% -8%, rgb(227 185 87 / 0.14), transparent 62%),
+    radial-gradient(900px 520px at 100% -8%, rgb(200 50 47 / 0.22), transparent 62%);
+}
+
+/* Hạt giấy mờ phủ toàn trang. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.07;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/* Khung "văn bản": viền đôi mảnh màu vàng đồng. */
+.panel {
+  position: relative;
+  background: color-mix(in oklab, var(--color-ink-900) 88%, transparent);
+  border: 1px solid rgb(227 185 87 / 0.28);
+  box-shadow:
+    inset 0 0 0 4px var(--color-ink-900),
+    inset 0 0 0 5px rgb(227 185 87 / 0.13),
+    0 18px 40px -18px rgb(0 0 0 / 0.7);
+}
+
+.tile {
+  background: color-mix(in oklab, var(--color-ink-900) 85%, transparent);
+  border: 1px solid rgb(227 185 87 / 0.18);
+}
+
+/* Lựa chọn C: viền chuyển sắc vàng → đỏ, biểu tượng của sự chuyển hóa. */
+.choice-c {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(var(--color-ink-900), var(--color-ink-900)) padding-box,
+    linear-gradient(135deg, var(--color-gold-400), var(--color-crimson-500)) border-box;
+}
+.choice-c:not(:disabled):hover {
+  background:
+    linear-gradient(color-mix(in oklab, var(--color-ink-900) 88%, var(--color-gold-400)), color-mix(in oklab, var(--color-ink-900) 88%, var(--color-crimson-500))) padding-box,
+    linear-gradient(135deg, var(--color-gold-300), var(--color-crimson-400)) border-box;
+}
+
+.choice {
+  transition: transform 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+}
+.choice:not(:disabled):hover,
+.choice:not(:disabled):focus-visible {
+  transform: translateY(-2px);
+}
+
+.bar-fill {
+  transition: width 0.5s ease;
+}
+.seg {
+  transition: left 0.25s ease, width 0.25s ease, opacity 0.2s ease;
+}
+
+.fade-in {
+  animation: fade-in 0.4s ease both;
+}
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+.stamp-in {
+  animation: stamp-in 0.55s cubic-bezier(0.2, 0.9, 0.3, 1.25) 0.15s both;
+}
+@keyframes stamp-in {
+  from { opacity: 0; transform: rotate(-14deg) scale(1.6); }
+  to { opacity: 1; transform: rotate(-6deg) scale(1); }
+}
+
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-thumb { background: var(--color-ink-600); border-radius: 8px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

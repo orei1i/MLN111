@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bốn Năm Đại Học: Trò Chơi Giải Quyết Mâu Thuẫn</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { background: radial-gradient(1200px 600px at 10% -10%, rgba(99,102,241,.18), transparent 60%),
+                     radial-gradient(900px 500px at 100% 0%, rgba(14,165,233,.10), transparent 55%), #020617; }
+  .fade-in { animation: fadeIn .35s ease both; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  .pop-in { animation: popIn .4s cubic-bezier(.2,.9,.3,1.2) both; }
+  @keyframes popIn { from { opacity: 0; transform: scale(.94); } to { opacity: 1; transform: none; } }
+  .choice:not(:disabled):hover { transform: translateY(-2px); }
+  .choice { transition: transform .15s ease, border-color .15s ease, background-color .15s ease, box-shadow .15s ease; }
+  .bar-fill { transition: width .5s ease; }
+  .seg { transition: left .25s ease, width .25s ease, opacity .2s ease; }
+  ::-webkit-scrollbar { width: 8px; } ::-webkit-scrollbar-thumb { background: #334155; border-radius: 8px; }
+</style>
+</head>
+<body class="min-h-screen text-slate-200 antialiased" style="font-family: 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;">
+
+<div class="max-w-4xl mx-auto px-4 py-6 md:py-10">
+  <header class="mb-6 text-center">
+    <p class="text-xs uppercase tracking-[.25em] text-indigo-400/80">Triết học Mác – Lênin · Quy luật mâu thuẫn</p>
+    <h1 class="mt-2 text-2xl md:text-4xl font-extrabold bg-gradient-to-r from-indigo-300 via-sky-300 to-emerald-300 bg-clip-text text-transparent">Bốn Năm Đại Học</h1>
+    <p class="text-slate-400 text-sm md:text-base">Trò chơi giải quyết mâu thuẫn</p>
+  </header>
+
+  <!-- INTRO -->
+  <section id="intro" class="fade-in">
+    <div class="rounded-2xl border border-slate-800 bg-slate-900/70 backdrop-blur p-6 md:p-8 shadow-xl">
+      <h2 class="text-xl font-bold text-slate-100">Hai mặt đối lập trong một sinh viên</h2>
+      <p class="mt-2 text-slate-300 leading-relaxed">
+        Mọi sự vật đều chứa các mặt đối lập vừa <em>thống nhất</em> vừa <em>đấu tranh</em> với nhau, và chính cuộc đấu tranh ấy là nguồn gốc của sự phát triển.
+        Trong 8 học kỳ tới, bạn đứng giữa hai mặt đối lập đó:
+      </p>
+      <div class="mt-5 grid md:grid-cols-3 gap-3">
+        <div class="rounded-xl border border-sky-500/30 bg-sky-500/5 p-4">
+          <div class="text-sky-300 font-semibold">📘 GPA — “Cung”</div>
+          <p class="text-sm text-slate-400 mt-1">Lý thuyết nhà trường: nền tảng, bằng cấp, tư duy hệ thống.</p>
+        </div>
+        <div class="rounded-xl border border-amber-500/30 bg-amber-500/5 p-4">
+          <div class="text-amber-300 font-semibold">🛠️ EXP — “Cầu”</div>
+          <p class="text-sm text-slate-400 mt-1">Kỹ năng thực chiến: dự án, thực tập, sản phẩm, va chạm thực tiễn.</p>
+        </div>
+        <div class="rounded-xl border border-emerald-500/30 bg-emerald-500/5 p-4">
+          <div class="text-emerald-300 font-semibold">⚡ Năng lượng</div>
+          <p class="text-sm text-slate-400 mt-1">Điều kiện vật chất để giải quyết mâu thuẫn. Hồi +30 mỗi kỳ. Về 0 là kiệt sức.</p>
+        </div>
+      </div>
+      <div class="mt-5 rounded-xl bg-indigo-500/10 border border-indigo-400/30 p-4 text-sm leading-relaxed">
+        <b class="text-indigo-300">Mục tiêu:</b> qua 8 học kỳ, đạt <b>GPA ≥ 2.8</b> và <b>EXP ≥ 60</b> để mâu thuẫn được <i>chuyển hóa</i> lên chất mới: tốt nghiệp và nhận offer.
+        Nghiêng hẳn về một phía (chỉ học, hoặc chỉ làm) đều dẫn tới thất bại. Mỗi kỳ có 3 lựa chọn:
+        <span class="text-sky-300 font-semibold">A</span> thiên về lý thuyết ·
+        <span class="text-amber-300 font-semibold">B</span> thiên về thực chiến ·
+        <span class="text-emerald-300 font-semibold">C</span> chuyển hóa mâu thuẫn (tốn nhiều năng lượng, cần đủ sức mới chọn được).
+      </div>
+      <button id="btnStart" class="mt-6 w-full md:w-auto px-8 py-3 rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white font-semibold shadow-lg shadow-indigo-500/30 transition">Bắt đầu Kì 1 →</button>
+    </div>
+  </section>
+
+  <!-- GAME -->
+  <section id="game" class="hidden">
+    <div id="topbar"></div>
+    <div id="tension" class="mt-3"></div>
+    <div id="stage" class="mt-4"></div>
+    <div class="mt-6 text-center">
+      <button id="btnReset" class="text-xs text-slate-500 hover:text-slate-300 underline underline-offset-2">Bắt đầu lại từ đầu</button>
+    </div>
+  </section>
+</div>
+
+<!-- END MODAL -->
+<div id="endModal" class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-sm overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="endTitle">
+  <div class="min-h-full flex items-start md:items-center justify-center p-4">
+    <div id="endCard" class="pop-in w-full max-w-3xl rounded-2xl border border-slate-700 bg-slate-900 shadow-2xl p-5 md:p-8 my-4"></div>
+  </div>
+</div>
+
+<script>
+/*DATA_START*/
+const REC = 30;
+const GOAL = { gpa: 2.8, exp: 60 };
+const EVENTS = [
+  { title: "Tuần sinh hoạt công dân & Câu lạc bộ học thuật", tag: "Tân sinh viên",
+    story: "Tiếng loa chào tân sinh viên vang khắp sân trường. Một bên là CLB Học thuật với các buổi ôn thi nhóm; bên kia là gian hàng Ban Sự kiện đang réo gọi nhân sự. Quỹ thời gian của bạn chỉ có hạn.",
+    choices: [
+      { key: "A", title: "Cày điểm ngay từ tuần đầu", desc: "Dự buổi hướng dẫn học tập, lập kế hoạch cày điểm cả kỳ.", gpa: 0.25, exp: -3, cost: 12,
+        result: "Bạn ghi chép cẩn thận, học nhóm đều đặn. Bảng điểm đầu kỳ đẹp, nhưng bạn vẫn chưa biết thị trường cần gì ở mình." },
+      { key: "B", title: "Vào Ban Sự kiện của CLB", desc: "Tổ chức chương trình chào tân, làm việc nhóm xuyên đêm.", gpa: -0.32, exp: 12, cost: 38,
+        result: "Sự kiện thành công, bạn quen cả chục người. Đổi lại, bài tập dồn ứ và điểm giữa kỳ tụt." },
+      { key: "C", title: "CLB Học thuật + thuyết trình chuyên đề", desc: "Nhận vai trò thuyết trình cho các bạn cùng khóa, học bằng cách dạy.", gpa: 0.12, exp: 8, cost: 42, req: 47,
+        result: "Muốn dạy lại thì phải hiểu thật sâu. Điểm nhích lên, mạng lưới quan hệ cũng mở rộng." } ] },
+
+  { title: "Toán rời rạc & Cấu trúc dữ liệu vs. Tự cày web frontend", tag: "Nền tảng vs. Kỹ năng",
+    story: "Đề cương Toán rời rạc dày cộp, Cấu trúc dữ liệu có bài kiểm tra trong hai tuần nữa. Cùng lúc, bạn vừa xem một video và muốn tự dựng ngay một trang web frontend cho riêng mình.",
+    choices: [
+      { key: "A", title: "Dồn sức cho Toán & CTDL", desc: "Giải sạch đề cương, học nhóm tới khuya.", gpa: 0.28, exp: -2, cost: 15,
+        result: "Bạn nắm vững quy nạp và cây nhị phân trên giấy, điểm cao vút, nhưng chưa từng triển khai thứ gì lên trình duyệt." },
+      { key: "B", title: "Tự cày frontend", desc: "Bỏ vài buổi lý thuyết, làm 3 trang web bằng HTML/CSS/JS.", gpa: -0.4, exp: 14, cost: 40,
+        result: "Trang web đầu tiên chạy được khiến bạn phấn chấn, nhưng bài kiểm tra Toán rời rạc là một thảm họa nhỏ." },
+      { key: "C", title: "Học CTDL bằng cách cài đặt thật", desc: "Dựng web app quản lý bằng cây và đồ thị.", gpa: 0.12, exp: 9, cost: 44, req: 49,
+        result: "Đồ thị và cây không còn là ký hiệu vô hồn mà điều khiển chính trang web của bạn. Lý thuyết và thực hành soi sáng lẫn nhau." } ] },
+
+  { title: "Hackathon công nghệ vs. Ôn thi Kiến trúc máy tính", tag: "Cuối kỳ nước rút",
+    story: "Hackathon 48 giờ của trường mở đăng ký, giải thưởng hấp dẫn, nhà tài trợ đến tận nơi tuyển người. Nhưng thi cuối kỳ môn Kiến trúc máy tính chỉ cách đó ba ngày.",
+    choices: [
+      { key: "A", title: "Ôn thi thâu đêm", desc: "Học kỹ thanh ghi, pipeline, bộ nhớ đệm.", gpa: 0.30, exp: -3, cost: 18,
+        result: "Điểm Kiến trúc máy tính gần như tuyệt đối. Tấm poster Hackathon, bạn chỉ dám ngắm từ xa." },
+      { key: "B", title: "Lao vào Hackathon", desc: "48 giờ code, thuyết trình sản phẩm; ôn thi tính sau.", gpa: -0.48, exp: 16, cost: 45,
+        result: "Nhóm bạn vào top 5! Đổi lại, bạn ngủ gật trong phòng thi và mất điểm nặng." },
+      { key: "C", title: "Chia ca: code ban ngày, ôn ban đêm", desc: "Đi Hackathon nhưng giữ 3 tiếng mỗi ngày cho Kiến trúc máy tính.", gpa: 0.10, exp: 10, cost: 48, req: 53,
+        result: "Sản phẩm chạy nhanh hơn vì bạn hiểu phần cứng bên dưới; điểm thi cũng không hề tệ." } ] },
+
+  { title: "Lời mời làm part-time vs. Đồ án môn học nền tảng", tag: "Ngã ba giữa chừng",
+    story: "Một startup nhắn bạn: cần một bạn sinh viên làm part-time, lương khá. Nhưng đồ án môn học nền tảng, thứ quyết định điểm cả kỳ, cũng đang tới hạn nộp.",
+    choices: [
+      { key: "A", title: "Tập trung đồ án", desc: "Từ chối tạm thời, đầu tư làm đồ án thật kỹ.", gpa: 0.25, exp: -3, cost: 15,
+        result: "Đồ án đạt điểm xuất sắc, thầy cô khen tính hệ thống. Nhưng bạn bè đã có kinh nghiệm làm việc với khách hàng thật." },
+      { key: "B", title: "Nhận part-time 25 giờ/tuần", desc: "Đi làm ở startup, đồ án nộp sát giờ.", gpa: -0.4, exp: 15, cost: 42,
+        result: "Bạn học cách sống với deadline thật và nhận đồng lương đầu tiên. Đồ án thì nộp vội, nhiều lỗi." },
+      { key: "C", title: "Part-time 10 giờ + đồ án từ bài toán thật", desc: "Lấy vấn đề của công ty làm đề tài đồ án.", gpa: 0.10, exp: 9, cost: 45, req: 50,
+        result: "Đồ án có bài toán thật, dữ liệu thật; công ty có thêm một mô-đun miễn phí. Cả hai bên cùng hưởng lợi." } ] },
+
+  { title: "Kỳ thực tập OJT: Công ty outsource lớn vs. Lab nghiên cứu của trường", tag: "OJT",
+    story: "Đến kỳ thực tập OJT. Một công ty outsource lớn nhận bạn vào dự án cho khách nước ngoài. Còn giảng viên lab của trường mời bạn ở lại làm trợ lý nghiên cứu.",
+    choices: [
+      { key: "A", title: "Ở lại lab nghiên cứu", desc: "Đọc paper, chạy thí nghiệm, viết báo cáo khoa học.", gpa: 0.25, exp: -3, cost: 14,
+        result: "Lab cho bạn môi trường học thuật lý tưởng và một bản báo cáo ấn tượng, nhưng chưa từng chạm vào quy trình của một dự án thương mại." },
+      { key: "B", title: "OJT toàn thời gian tại outsource", desc: "Chạy deadline theo yêu cầu khách hàng.", gpa: -0.32, exp: 16, cost: 45,
+        result: "Bạn học được Git flow, code review, CI/CD trong dự án lớn, nhưng luôn thiếu ngủ và bỏ nhiều buổi bảo vệ chuyên đề." },
+      { key: "C", title: "3 ngày outsource + 2 ngày lab", desc: "Đem thuật toán từ lab áp dụng vào dữ liệu khách hàng.", gpa: 0.12, exp: 10, cost: 48, req: 53,
+        result: "Kết quả vừa đủ để viết báo cáo, vừa đủ để bỏ vào CV. Lab và công ty trở thành hai nửa của một vòng lặp học – làm." } ] },
+
+  { title: "Công nghệ AI mới bùng nổ: Tự nghiên cứu tích hợp vs. Học đối phó giáo trình cũ", tag: "Làn sóng AI",
+    story: "Một làn sóng AI mới tràn vào ngành. Mạng xã hội đầy demo chatbot, còn giáo trình trên lớp vẫn dừng ở những slide của mấy năm trước.",
+    choices: [
+      { key: "A", title: "Bám giáo trình, học sát đề", desc: "Học đối phó để giữ chắc điểm, tạm gác trào lưu.", gpa: 0.22, exp: -3, cost: 12,
+        result: "Điểm cao nhờ học sát đề, nhưng khi bạn bè bàn về LLM và RAG, bạn chỉ biết gật đầu. Kiến thức bắt đầu lỗi thời." },
+      { key: "B", title: "Bỏ giờ, tự nghiên cứu tích hợp AI", desc: "Dựng side project gọi mô hình AI qua API.", gpa: -0.4, exp: 15, cost: 42,
+        result: "Side project gây chú ý trên mạng, nhưng vài môn nền tảng bị bỏ dở và giảng viên ghi nhận sự vắng mặt." },
+      { key: "C", title: "Học có chọn lọc, tích hợp vào bài tập lớn", desc: "Nắm nền tảng xác suất – ML trên lớp, rồi tự áp dụng AI.", gpa: 0.10, exp: 9, cost: 44, req: 49,
+        result: "Bạn dùng nền tảng trên lớp để hiểu vì sao mô hình hoạt động, rồi tích hợp vào bài tập lớn. Không chạy theo trào lưu mà làm chủ nó." } ] },
+
+  { title: "Khóa luận tốt nghiệp vs. Offer Fresher full-time sớm", tag: "Chặng nước rút",
+    story: "Khóa luận tốt nghiệp bắt đầu. Đúng lúc đó, một công ty công nghệ gửi offer Fresher full-time, đi làm sớm để giữ chỗ, chờ mãi không được.",
+    choices: [
+      { key: "A", title: "Toàn tâm cho Khóa luận", desc: "Gác offer, đầu tư nghiên cứu và viết thật chỉn chu.", gpa: 0.28, exp: -3, cost: 18,
+        result: "Khóa luận được hội đồng chấm cao, nhưng suất Fresher đã thuộc về người khác. Bạn hơi lo về khoảng trống kinh nghiệm." },
+      { key: "B", title: "Nhận offer Fresher full-time", desc: "Đi làm 5 ngày/tuần, khóa luận làm khi rảnh.", gpa: -0.48, exp: 16, cost: 48,
+        result: "Lương đầu tiên rất thơm, nhưng khóa luận cứ bị đẩy lùi và giảng viên hướng dẫn thất vọng." },
+      { key: "C", title: "Làm bán thời gian, lấy dữ liệu công ty làm khóa luận", desc: "Thương lượng làm remote, biến bài toán thực tế thành đề tài.", gpa: 0.12, exp: 10, cost: 50, req: 55,
+        result: "Bạn vừa có lương, vừa có đề tài thực tế với dữ liệu thật. Lý thuyết được kiểm nghiệm ngay trong thực tiễn." } ] },
+
+  { title: "Chuẩn bị phỏng vấn tốt nghiệp: Hoàn thiện hồ sơ & Portfolio", tag: "Vòng cuối",
+    story: "Học kỳ cuối. Mùa tuyển dụng đã mở, hàng chục JD đang chờ. Bảng điểm, CV và portfolio, ba thứ này sẽ nói thay bạn trước nhà tuyển dụng.",
+    choices: [
+      { key: "A", title: "Chăm bảng điểm & CV học thuật", desc: "Ôn lý thuyết phỏng vấn, tối ưu điểm các môn còn lại.", gpa: 0.20, exp: -3, cost: 12,
+        result: "Bảng điểm và CV học thuật của bạn lung linh, nhưng phần dự án cá nhân thì khá mỏng." },
+      { key: "B", title: "Dồn sức cho Portfolio & apply hàng loạt", desc: "Refactor sản phẩm, dựng demo, nộp hồ sơ dồn dập.", gpa: -0.32, exp: 14, cost: 40,
+        result: "Portfolio rực rỡ với nhiều demo chạy thật, nhưng điểm học phần cuối kỳ tụt và bảng điểm thành gánh nặng." },
+      { key: "C", title: "Portfolio kể chuyện + phỏng vấn thử", desc: "Mỗi dự án đi kèm bài toán, lý thuyết vận dụng và kết quả đo được.", gpa: 0.10, exp: 9, cost: 45, req: 50,
+        result: "Nhà tuyển dụng nhìn thấy cả tư duy lẫn hành động: mỗi dự án là một minh chứng lý thuyết đã được thực tiễn kiểm nghiệm." } ] }
+];
+
+const ENDINGS = {
+  1: { icon: "🎓", tone: "fail", kind: "Thất bại cực đoan I", name: "Hàn lâm cô lập",
+    summary: "Bạn tốt nghiệp Thủ khoa/Xuất sắc, nhưng trượt toàn bộ 20 JD tuyển dụng vì hồ sơ thiếu dự án và kỹ năng thực chiến.",
+    quote: "Bạn đã tuyệt đối hóa một mặt của mâu thuẫn: có “Cung” mà không có “Cầu”. Lý luận không được thực tiễn kiểm nghiệm thì chỉ là lý luận suông, còn thực tiễn, theo Lênin, cao hơn nhận thức lý luận. Mâu thuẫn không được giải quyết, sự phát triển bị đình trệ trong một trạng thái cô lập." },
+  2: { icon: "⚡", tone: "fail", kind: "Thất bại cực đoan II", name: "Chệch hướng thực dụng",
+    summary: "Code rất tốt, nhưng trường buộc thôi học/nợ bằng: bạn không đủ điều kiện nhận bằng cử nhân.",
+    quote: "Bạn chỉ chạy theo “Cầu”, bỏ quên “Cung”. Thực tiễn thiếu nền tảng lý luận dẫn đường dễ trở thành mò mẫm và không bền vững. Một mặt đối lập bị phủ nhận hoàn toàn sẽ quay lại phá hủy chính nền móng của mặt còn lại." },
+  3: { icon: "🔥", tone: "fail", kind: "Thất bại kiệt sức", name: "Quá tải (Burnout)",
+    summary: "Năng lượng cạn về 0. Bạn nhập viện vì burnout và phải lưu ban 1 năm.",
+    quote: "Sự tích lũy về lượng vượt quá “độ” thì tất yếu xảy ra bước nhảy, nhưng ở đây là bước nhảy theo chiều phá vỡ. Năng lượng là điều kiện vật chất để giải quyết mọi mâu thuẫn; kiệt quệ nó thì mâu thuẫn chưa kịp chuyển hóa, con người đã gục ngã trước." },
+  4: { icon: "🌟", tone: "win", kind: "Chuyển hóa thành công", name: "Thống nhất của các mặt đối lập",
+    summary: "Bạn tốt nghiệp loại Khá/Giỏi và nhận ngay offer Junior với mức lương mơ ước. Mâu thuẫn được chuyển hóa biện chứng.",
+    quote: "Bạn không chọn phe mà nâng cả hai mặt lên. Lý thuyết dẫn đường cho thực hành, thực hành kiểm nghiệm lý thuyết. Sự tích lũy đều đặn về lượng ở cả hai phía đã tạo nên bước nhảy về chất: từ sinh viên thành kỹ sư. Đó là sự giải quyết mâu thuẫn bằng chuyển hóa lên trình độ cao hơn." },
+  5: { icon: "🌫️", tone: "meh", kind: "Tầm thường / Bế tắc", name: "Mâu thuẫn chưa được giải quyết",
+    summary: "Bạn ra trường với tấm bằng trung bình, làm trái ngành hoặc thất nghiệp tạm thời.",
+    quote: "Mâu thuẫn vẫn còn đó: hai mặt đối lập chưa đủ mạnh để đẩy sự vật lên một chất mới. Chưa đủ tích lũy về lượng nên chưa có bước nhảy về chất. Bạn chưa thất bại, nhưng cũng chưa chuyển hóa; mâu thuẫn ấy sẽ tiếp tục đòi được giải quyết ở giai đoạn sau." }
+};
+
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const round2 = v => Math.round(v * 100) / 100;
+
+function newState() {
+  return { semester: 1, gpa: 3.0, exp: 10, energy: 100, history: [], phase: "event",
+           last: null, recovered: 0, burnout: false, counts: { A: 0, B: 0, C: 0 } };
+}
+
+function computeEnding(s) {
+  if (s.burnout) return 3;
+  if (s.exp >= 70 && s.gpa < 2.0) return 2;
+  if (s.gpa >= 3.6 && s.exp < 40) return 1;
+  if (s.gpa >= GOAL.gpa && s.exp >= GOAL.exp) return 4;
+  return 5;
+}
+/*DATA_END*/
+
+let S = newState();
+const $ = id => document.getElementById(id);
+const fmtD = (v, dp = 0) => (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v).toFixed(dp);
+const cur = () => EVENTS[S.semester - 1];
+
+const TYPE = {
+  A: { label: "Thiên về Lý thuyết", c: "sky",   ring: "hover:border-sky-400/70 hover:bg-sky-500/10",   badge: "bg-sky-500/20 text-sky-300 border-sky-400/40",
+       note: "Mặt “Cung” được củng cố, nhưng mâu thuẫn chưa được giải quyết: “Cầu” bị bỏ lại phía sau." },
+  B: { label: "Thiên về Thực chiến", c: "amber", ring: "hover:border-amber-400/70 hover:bg-amber-500/10", badge: "bg-amber-500/20 text-amber-300 border-amber-400/40",
+       note: "Mặt “Cầu” tăng mạnh nhưng nền tảng bị bào mòn. Mặt đối lập kia đang chờ bạn trả nợ." },
+  C: { label: "Chuyển hóa mâu thuẫn", c: "emerald", ring: "hover:border-emerald-400/70 hover:bg-emerald-500/10", badge: "bg-emerald-500/20 text-emerald-300 border-emerald-400/40",
+       note: "Hai mặt đối lập cùng thúc đẩy nhau: học để làm, làm để hiểu sâu hơn. Đây là chuyển hóa, không phải dung hòa." }
+};
+
+function gpaLevel(g) {
+  if (g < 2.0) return { t: "Báo động", cls: "text-rose-400", dot: "bg-rose-500" };
+  if (g < GOAL.gpa) return { t: "Dưới ngưỡng", cls: "text-amber-400", dot: "bg-amber-400" };
+  if (g < 3.6) return { t: "Ổn định", cls: "text-emerald-400", dot: "bg-emerald-400" };
+  return { t: "Xuất sắc", cls: "text-sky-300", dot: "bg-sky-400" };
+}
+
+/* ---------- TOP BAR ---------- */
+function barHtml(id, pct, fillCls, tickPct) {
+  return `<div class="relative h-2.5 mt-2 rounded-full bg-slate-800 overflow-hidden">
+      <div class="bar-fill absolute inset-y-0 left-0 rounded-full ${fillCls}" style="width:${pct}%"></div>
+      <div id="seg-${id}" class="seg absolute inset-y-0 opacity-0" style="left:${pct}%;width:0"></div>
+      ${tickPct != null ? `<div class="absolute inset-y-0 w-0.5 bg-white/70" style="left:${tickPct}%" title="Ngưỡng mục tiêu"></div>` : ""}
+    </div>`;
+}
+
+function renderTopbar() {
+  const lv = gpaLevel(S.gpa);
+  const enFill = S.energy < 25 ? "bg-rose-500" : S.energy < 50 ? "bg-amber-400" : "bg-emerald-400";
+  const pips = Array.from({ length: 8 }, (_, i) => {
+    const n = i + 1;
+    const cls = n < S.semester || (n === S.semester && S.phase === "result") ? "bg-indigo-400" : n === S.semester ? "bg-indigo-300 ring-2 ring-indigo-300/40" : "bg-slate-700";
+    return `<span class="h-1.5 flex-1 rounded-full ${cls}"></span>`;
+  }).join("");
+  $("topbar").innerHTML = `
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+    <div class="rounded-xl border border-slate-800 bg-slate-900/70 p-3">
+      <div class="text-[11px] uppercase tracking-wider text-slate-400">Học kỳ</div>
+      <div class="mt-1 text-2xl font-bold text-indigo-300">${S.semester}<span class="text-slate-500 text-base font-medium"> / 8</span></div>
+      <div class="mt-2 flex gap-1">${pips}</div>
+    </div>
+    <div class="rounded-xl border border-slate-800 bg-slate-900/70 p-3">
+      <div class="flex items-center justify-between text-[11px] uppercase tracking-wider text-slate-400"><span>GPA · Cung</span>
+        <span class="flex items-center gap-1 normal-case tracking-normal ${lv.cls}"><i class="inline-block w-2 h-2 rounded-full ${lv.dot}"></i>${lv.t}</span></div>
+      <div class="mt-1 flex items-baseline gap-2"><span class="text-2xl font-bold ${lv.cls}">${S.gpa.toFixed(2)}</span><span class="text-slate-500 text-sm">/ 4.00</span><span id="d-gpa" class="text-sm font-semibold"></span></div>
+      ${barHtml("gpa", S.gpa / 4 * 100, "bg-sky-400", GOAL.gpa / 4 * 100)}
+    </div>
+    <div class="rounded-xl border border-slate-800 bg-slate-900/70 p-3">
+      <div class="text-[11px] uppercase tracking-wider text-slate-400">EXP · Cầu</div>
+      <div class="mt-1 flex items-baseline gap-2"><span class="text-2xl font-bold text-amber-300">${S.exp}</span><span class="text-slate-500 text-sm">/ 100</span><span id="d-exp" class="text-sm font-semibold"></span></div>
+      ${barHtml("exp", S.exp, "bg-amber-400", GOAL.exp)}
+    </div>
+    <div class="rounded-xl border border-slate-800 bg-slate-900/70 p-3">
+      <div class="text-[11px] uppercase tracking-wider text-slate-400">Năng lượng</div>
+      <div class="mt-1 flex items-baseline gap-2"><span class="text-2xl font-bold ${S.energy < 25 ? "text-rose-400" : "text-emerald-300"}">${S.energy}</span><span class="text-slate-500 text-sm">/ 100</span><span id="d-energy" class="text-sm font-semibold"></span></div>
+      ${barHtml("energy", S.energy, enFill)}
+    </div>
+  </div>`;
+
+  // Tension gauge
+  const skew = clamp(S.exp / 100 - S.gpa / 4, -1, 1);
+  const pos = 50 + skew * 50;
+  let msg, mc;
+  if (Math.abs(skew) < 0.15) { msg = "Hai mặt đối lập đang thống nhất và cân bằng"; mc = "text-emerald-300"; }
+  else if (skew < 0) { msg = "“Cung” đang lấn át “Cầu”: lý thuyết chưa được thực tiễn kiểm nghiệm"; mc = "text-sky-300"; }
+  else { msg = "“Cầu” đang lệch khỏi “Cung”: thực tiễn thiếu nền tảng lý luận"; mc = "text-amber-300"; }
+  $("tension").innerHTML = `
+    <div class="rounded-xl border border-slate-800 bg-slate-900/50 px-4 py-3">
+      <div class="flex justify-between text-[11px] uppercase tracking-wider text-slate-500"><span>📘 Lý thuyết (Cung)</span><span>Thực chiến (Cầu) 🛠️</span></div>
+      <div class="relative h-2 mt-2 rounded-full bg-gradient-to-r from-sky-500/50 via-emerald-400/50 to-amber-500/50">
+        <div class="absolute -top-1 w-4 h-4 rounded-full bg-white shadow border-2 border-indigo-500 transition-all duration-500" style="left:calc(${pos}% - 8px)"></div>
+      </div>
+      <div class="mt-2 text-xs ${mc}">${msg}</div>
+    </div>`;
+}
+
+function setSeg(id, from, to) {
+  const el = $("seg-" + id); if (!el) return;
+  el.style.left = Math.min(from, to) + "%";
+  el.style.width = Math.abs(to - from) + "%";
+  el.className = "seg absolute inset-y-0 " + (to >= from ? "bg-emerald-300/80" : "bg-rose-500/80");
+  el.style.opacity = to === from ? 0 : 1;
+}
+function setDelta(id, v, dp) {
+  const el = $("d-" + id); if (!el) return;
+  el.textContent = v === 0 ? "" : fmtD(v, dp);
+  el.className = "text-sm font-semibold " + (v > 0 ? "text-emerald-400" : "text-rose-400");
+}
+function preview(key) {
+  const c = cur().choices.find(x => x.key === key); if (!c) return;
+  const g = round2(clamp(S.gpa + c.gpa, 0, 4)), e = clamp(S.exp + c.exp, 0, 100), n = clamp(S.energy - c.cost, 0, 100);
+  setSeg("gpa", S.gpa / 4 * 100, g / 4 * 100); setDelta("gpa", round2(g - S.gpa), 2);
+  setSeg("exp", S.exp, e); setDelta("exp", e - S.exp, 0);
+  setSeg("energy", S.energy, n); setDelta("energy", n - S.energy, 0);
+}
+function clearPreview() {
+  ["gpa", "exp", "energy"].forEach(k => { setSeg(k, 0, 0); const d = $("d-" + k); if (d) d.textContent = ""; });
+}
+
+/* ---------- STAGE ---------- */
+function chip(label, v, dp, invertGood) {
+  const good = v > 0;
+  const cls = v === 0 ? "bg-slate-800 text-slate-400" : good ? "bg-emerald-500/15 text-emerald-300" : "bg-rose-500/15 text-rose-300";
+  return `<span class="px-2 py-0.5 rounded-md text-xs font-semibold ${cls}">${label} ${v === 0 ? "±0" : fmtD(v, dp)}</span>`;
+}
+
+function renderStage() {
+  const ev = cur();
+  if (S.phase === "event") {
+    const choices = ev.choices.map(c => {
+      const t = TYPE[c.key];
+      const locked = c.req && S.energy < c.req;
+      const risky = !c.req && S.energy - c.cost <= 0;
+      return `<button class="choice text-left rounded-xl border border-slate-700 bg-slate-900/70 p-4 ${locked ? "opacity-45 cursor-not-allowed" : t.ring} focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
+                data-key="${c.key}" ${locked ? "disabled" : ""} aria-label="Lựa chọn ${c.key}: ${c.title}">
+          <div class="flex items-start gap-3">
+            <span class="shrink-0 w-8 h-8 rounded-lg border flex items-center justify-center font-bold ${t.badge}">${c.key}</span>
+            <div class="min-w-0">
+              <div class="text-[11px] uppercase tracking-wider text-${t.c}-300/80">${t.label}</div>
+              <div class="font-semibold text-slate-100 leading-snug">${c.title}</div>
+              <p class="mt-1 text-sm text-slate-400 leading-snug">${c.desc}</p>
+              <div class="mt-3 flex flex-wrap gap-1.5">${chip("GPA", c.gpa, 2)}${chip("EXP", c.exp, 0)}${chip("Năng lượng", -c.cost, 0)}</div>
+              ${locked ? `<div class="mt-2 text-xs text-rose-300">🔒 Cần ≥ ${c.req} năng lượng (hiện có ${S.energy})</div>` : ""}
+              ${risky ? `<div class="mt-2 text-xs text-rose-300">⚠ Chọn cái này sẽ kiệt sức!</div>` : ""}
+              ${c.req && !locked ? `<div class="mt-2 text-xs text-slate-500">Yêu cầu ≥ ${c.req} năng lượng</div>` : ""}
+            </div>
+          </div>
+        </button>`;
+    }).join("");
+    $("stage").innerHTML = `
+      <div class="fade-in rounded-2xl border border-slate-800 bg-slate-900/70 p-5 md:p-7 shadow-xl">
+        <div class="flex flex-wrap items-center gap-2 text-xs">
+          <span class="px-2 py-1 rounded-md bg-indigo-500/20 text-indigo-300 font-semibold">Kì ${S.semester}</span>
+          <span class="text-slate-400">${ev.tag}</span>
+          ${S.recovered > 0 ? `<span class="ml-auto px-2 py-1 rounded-md bg-emerald-500/15 text-emerald-300">😴 Nghỉ ngơi giữa kỳ: +${S.recovered} năng lượng</span>` : ""}
+        </div>
+        <h2 class="mt-3 text-xl md:text-2xl font-bold text-slate-50 leading-snug">${ev.title}</h2>
+        <p class="mt-3 text-slate-300 leading-relaxed">${ev.story}</p>
+        <div class="mt-5 grid gap-3 md:grid-cols-3" id="choices">${choices}</div>
+        <p class="mt-4 text-xs text-slate-500">Di chuột (hoặc chạm giữ) vào lựa chọn để xem trước tác động lên thanh chỉ số · Phím tắt: A/B/C hoặc 1/2/3</p>
+      </div>`;
+  } else {
+    const L = S.last, t = TYPE[L.c.key];
+    const isEnd = L.burnout || S.semester === 8;
+    $("stage").innerHTML = `
+      <div class="fade-in rounded-2xl border border-slate-800 bg-slate-900/70 p-5 md:p-7 shadow-xl">
+        <div class="flex items-center gap-2 text-xs">
+          <span class="px-2 py-1 rounded-md bg-indigo-500/20 text-indigo-300 font-semibold">Kì ${S.semester}</span>
+          <span class="text-slate-400">Kết quả lựa chọn</span>
+        </div>
+        <div class="mt-3 flex items-start gap-3">
+          <span class="shrink-0 w-9 h-9 rounded-lg border flex items-center justify-center font-bold ${t.badge}">${L.c.key}</span>
+          <div><div class="text-[11px] uppercase tracking-wider text-${t.c}-300/80">${t.label}</div>
+            <h2 class="text-lg md:text-xl font-bold text-slate-50">${L.c.title}</h2></div>
+        </div>
+        <p class="mt-4 text-slate-300 leading-relaxed">${L.c.result}</p>
+        <div class="mt-4 flex flex-wrap gap-1.5">${chip("GPA", L.d.gpa, 2)}${chip("EXP", L.d.exp, 0)}${chip("Năng lượng", L.d.energy, 0)}</div>
+        <div class="mt-4 rounded-xl border-l-4 border-${t.c}-400/60 bg-slate-800/50 p-3 text-sm text-slate-300 italic">💭 ${t.note}</div>
+        ${L.burnout ? `<div class="mt-4 rounded-xl bg-rose-500/10 border border-rose-500/40 p-3 text-rose-300 text-sm">🚨 Năng lượng của bạn đã cạn kiệt. Cơ thể bạn không thể tiếp tục được nữa...</div>` : ""}
+        <button id="btnNext" class="mt-6 px-7 py-3 rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white font-semibold shadow-lg shadow-indigo-500/30 transition">
+          ${L.burnout ? "Xem hậu quả →" : isEnd ? "Xem kết cục tốt nghiệp →" : `Sang Kì ${S.semester + 1} →`}</button>
+      </div>`;
+  }
+}
+
+function render() { renderTopbar(); renderStage(); }
+
+/* ---------- ACTIONS ---------- */
+function choose(key) {
+  if (S.phase !== "event") return;
+  const ev = cur(), c = ev.choices.find(x => x.key === key);
+  if (!c || (c.req && S.energy < c.req)) return;
+  const before = { gpa: S.gpa, exp: S.exp, energy: S.energy };
+  const burnout = S.energy - c.cost <= 0;
+  S.gpa = round2(clamp(S.gpa + c.gpa, 0, 4));
+  S.exp = clamp(S.exp + c.exp, 0, 100);
+  S.energy = clamp(S.energy - c.cost, 0, 100);
+  const d = { gpa: round2(S.gpa - before.gpa), exp: S.exp - before.exp, energy: S.energy - before.energy };
+  S.counts[key]++;
+  S.history.push({ sem: S.semester, event: ev.title, key, title: c.title, d });
+  S.burnout = burnout;
+  S.last = { c, d, burnout };
+  S.phase = "result";
+  render();
+}
+
+function next() {
+  if (S.phase !== "result") return;
+  if (S.last.burnout || S.semester === 8) return finish();
+  S.semester++;
+  const e = Math.min(100, S.energy + REC);
+  S.recovered = e - S.energy; S.energy = e;
+  S.phase = "event";
+  render();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function radarSvg(vals) {
+  const size = 280, cx = size / 2, cy = size / 2 + 4, R = 88, n = vals.length;
+  const pt = (i, r) => { const a = -Math.PI / 2 + i * 2 * Math.PI / n; return [cx + Math.cos(a) * r, cy + Math.sin(a) * r]; };
+  const rings = [.25, .5, .75, 1].map(f => `<polygon points="${vals.map((_, i) => pt(i, R * f).join(",")).join(" ")}" fill="none" stroke="#334155" stroke-width="1"/>`).join("");
+  const axes = vals.map((_, i) => `<line x1="${cx}" y1="${cy}" x2="${pt(i, R)[0]}" y2="${pt(i, R)[1]}" stroke="#334155"/>`).join("");
+  const poly = vals.map((v, i) => pt(i, R * clamp(v.v, 0.02, 1)).join(",")).join(" ");
+  const dots = vals.map((v, i) => { const [x, y] = pt(i, R * clamp(v.v, 0.02, 1)); return `<circle cx="${x}" cy="${y}" r="3.5" fill="#a5b4fc"/>`; }).join("");
+  const labels = vals.map((v, i) => {
+    const [x, y] = pt(i, R + 22);
+    const anchor = Math.abs(x - cx) < 6 ? "middle" : x > cx ? "start" : "end";
+    return `<text x="${x}" y="${y}" text-anchor="${anchor}" font-size="11" fill="#cbd5e1"><tspan x="${x}" dy="0">${v.l}</tspan><tspan x="${x}" dy="13" fill="#94a3b8" font-size="10">${v.t}</tspan></text>`;
+  }).join("");
+  return `<svg viewBox="0 0 ${size} ${size + 16}" class="w-full max-w-[300px] mx-auto" role="img" aria-label="Biểu đồ radar chỉ số">
+    ${rings}${axes}<polygon points="${poly}" fill="rgba(99,102,241,.35)" stroke="#818cf8" stroke-width="2"/>${dots}${labels}</svg>`;
+}
+
+function finish() {
+  const id = computeEnding(S), E = ENDINGS[id];
+  const g = S.gpa / 4, e = S.exp / 100;
+  const vals = [
+    { l: "Học thuật", t: S.gpa.toFixed(2) + " GPA", v: g },
+    { l: "Thực chiến", t: S.exp + " EXP", v: e },
+    { l: "Năng lượng", t: S.energy + "/100", v: S.energy / 100 },
+    { l: "Cân bằng", t: Math.round((1 - Math.abs(g - e)) * 100) + "%", v: 1 - Math.abs(g - e) },
+    { l: "Chuyển hóa", t: S.counts.C + " lần chọn C", v: S.counts.C / 8 }
+  ];
+  const tone = { win: ["from-emerald-500/20 border-emerald-400/50", "text-emerald-300"], fail: ["from-rose-500/20 border-rose-400/50", "text-rose-300"], meh: ["from-slate-500/20 border-slate-400/40", "text-slate-300"] }[E.tone];
+  const okG = S.gpa >= GOAL.gpa, okE = S.exp >= GOAL.exp;
+  const summary = id === 3
+    ? `Năng lượng cạn về 0 ngay <b>Kì ${S.semester}</b>. Bạn nhập viện vì burnout và phải lưu ban 1 năm.` : E.summary;
+  const log = S.history.map(h => {
+    const t = TYPE[h.key];
+    return `<li class="flex flex-wrap items-center gap-x-2 gap-y-1 py-2 border-b border-slate-800 last:border-0">
+      <span class="text-xs text-slate-500 w-10">Kì ${h.sem}</span>
+      <span class="w-6 h-6 rounded-md border text-xs flex items-center justify-center font-bold ${t.badge}">${h.key}</span>
+      <span class="flex-1 min-w-[160px] text-sm text-slate-300">${h.title}</span>
+      <span class="flex gap-1">${chip("GPA", h.d.gpa, 2)}${chip("EXP", h.d.exp, 0)}${chip("NL", h.d.energy, 0)}</span></li>`;
+  }).join("");
+
+  $("endCard").innerHTML = `
+    <div class="rounded-xl border bg-gradient-to-b ${tone[0]} to-transparent p-5 text-center">
+      <div class="text-5xl">${E.icon}</div>
+      <div class="mt-2 inline-block px-3 py-1 rounded-full text-xs font-semibold border border-current ${tone[1]}">${E.kind}</div>
+      <h2 id="endTitle" class="mt-2 text-2xl md:text-3xl font-extrabold text-slate-50">${E.name}</h2>
+      <p class="mt-2 text-slate-300 leading-relaxed">${summary}</p>
+    </div>
+
+    <div class="mt-5 grid md:grid-cols-2 gap-5 items-center">
+      <div>${radarSvg(vals)}</div>
+      <div class="space-y-3">
+        <div class="grid grid-cols-3 gap-2 text-center">
+          <div class="rounded-lg bg-slate-800/70 p-2"><div class="text-[11px] text-slate-400">GPA</div><div class="text-lg font-bold ${okG ? "text-emerald-300" : "text-rose-300"}">${S.gpa.toFixed(2)}</div></div>
+          <div class="rounded-lg bg-slate-800/70 p-2"><div class="text-[11px] text-slate-400">EXP</div><div class="text-lg font-bold ${okE ? "text-emerald-300" : "text-rose-300"}">${S.exp}</div></div>
+          <div class="rounded-lg bg-slate-800/70 p-2"><div class="text-[11px] text-slate-400">Năng lượng</div><div class="text-lg font-bold text-slate-100">${S.energy}</div></div>
+        </div>
+        <div class="rounded-lg bg-slate-800/50 p-3 text-xs text-slate-400 leading-relaxed">
+          Điều kiện chuyển hóa: GPA ≥ ${GOAL.gpa} <b class="${okG ? "text-emerald-300" : "text-rose-300"}">${okG ? "✓" : "✗"}</b> · EXP ≥ ${GOAL.exp} <b class="${okE ? "text-emerald-300" : "text-rose-300"}">${okE ? "✓" : "✗"}</b><br>
+          Đã chọn: A×${S.counts.A} · B×${S.counts.B} · C×${S.counts.C} · Hoàn thành ${S.burnout ? S.semester - 1 : S.semester}/8 kỳ
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-5 rounded-xl border-l-4 border-indigo-400 bg-indigo-500/10 p-4">
+      <div class="text-xs uppercase tracking-wider text-indigo-300 font-semibold">Kết luận triết học</div>
+      <p class="mt-1 text-slate-200 leading-relaxed italic">“${E.quote}”</p>
+    </div>
+
+    <details class="mt-5 rounded-xl border border-slate-800 bg-slate-950/40 p-4" open>
+      <summary class="cursor-pointer text-sm font-semibold text-slate-200">Nhật ký quyết định (${S.history.length} kỳ)</summary>
+      <ol class="mt-2">${log}</ol>
+    </details>
+
+    <button id="btnRestart" class="mt-6 w-full py-3 rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white font-semibold shadow-lg shadow-indigo-500/30 transition">🔄 Chơi lại</button>`;
+  $("endModal").classList.remove("hidden");
+  document.body.style.overflow = "hidden";
+  $("endModal").scrollTop = 0;
+  $("btnRestart").focus();
+}
+
+function startGame() {
+  S = newState();
+  $("endModal").classList.add("hidden");
+  document.body.style.overflow = "";
+  $("intro").classList.add("hidden");
+  $("game").classList.remove("hidden");
+  render();
+  window.scrollTo({ top: 0 });
+}
+
+/* ---------- EVENTS ---------- */
+$("btnStart").addEventListener("click", startGame);
+$("btnReset").addEventListener("click", () => { if (S.phase === "event" && S.semester === 1 && !S.history.length || confirm("Bắt đầu lại từ Kì 1?")) startGame(); });
+document.addEventListener("click", e => {
+  const ch = e.target.closest(".choice"); if (ch && !ch.disabled) return choose(ch.dataset.key);
+  if (e.target.closest("#btnNext")) return next();
+  if (e.target.closest("#btnRestart")) return startGame();
+});
+["mouseover", "focusin"].forEach(t => document.addEventListener(t, e => {
+  const ch = e.target.closest && e.target.closest(".choice");
+  if (ch && !ch.disabled) preview(ch.dataset.key);
+}));
+["mouseout", "focusout"].forEach(t => document.addEventListener(t, e => {
+  if (e.target.closest && e.target.closest(".choice")) clearPreview();
+}));
+document.addEventListener("keydown", e => {
+  if (!$("endModal").classList.contains("hidden") || $("game").classList.contains("hidden")) return;
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
+  const map = { a: "A", b: "B", c: "C", 1: "A", 2: "B", 3: "C" };
+  const k = map[e.key.toLowerCase()];
+  if (S.phase === "event" && k) return choose(k);
+  if (S.phase === "result" && e.key === "Enter" && !(e.target.tagName === "BUTTON")) next();
+});
+</script>
+</body>
+</html>
