@@ -9,16 +9,16 @@ export default function Home() {
             Triết học Mác – Lênin · Quy luật mâu thuẫn
           </p>
           <h1 className="mt-3 font-display text-4xl font-black leading-tight text-paper md:text-6xl">
-            Bốn Năm <span className="text-gold-400">Đại</span>{" "}
-            <span className="text-crimson-400">Học</span>
+            <span className="text-gold-400">Cung</span> <span className="text-paper-dim">–</span>{" "}
+            <span className="text-crimson-400">Cầu</span>
           </h1>
           <div className="mx-auto mt-4 flex max-w-xs items-center gap-3 text-gold-400/70" aria-hidden>
             <span className="h-px flex-1 bg-gradient-to-r from-transparent to-gold-400/60" />
             <span className="text-xs">✦</span>
             <span className="h-px flex-1 bg-gradient-to-l from-transparent to-crimson-400/60" />
           </div>
-          <p className="mt-3 font-display text-base italic text-paper-dim md:text-lg">
-            Trò chơi giải quyết mâu thuẫn
+          <p className="mx-auto mt-3 max-w-xl font-display text-base italic leading-snug text-paper-dim md:text-lg">
+            Mâu thuẫn trong giáo dục đào tạo và việc làm ở Việt Nam
           </p>
         </header>
         <Game />

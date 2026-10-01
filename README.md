@@ -1,4 +1,4 @@
-# Bốn Năm Đại Học: Trò Chơi Giải Quyết Mâu Thuẫn
+# Cung – Cầu: Mâu thuẫn trong giáo dục đào tạo và việc làm ở Việt Nam
 
 Game mô phỏng 9 học kỳ (Kì 1–9) của sinh viên ngành Kỹ thuật phần mềm, Đại học FPT theo khung chương trình BIT_SE_K21C, minh họa **quy luật thống nhất và đấu tranh của các mặt đối lập** (triết học Mác – Lênin):
 cân bằng **GPA** (“Cung” – lý thuyết) và **EXP** (“Cầu” – thực tiễn) để đạt kết cục *chuyển hóa*.

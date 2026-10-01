@@ -16,9 +16,9 @@ const display = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Bốn Năm Đại Học: Trò Chơi Giải Quyết Mâu Thuẫn",
+  title: "Cung – Cầu: Mâu thuẫn trong giáo dục đào tạo và việc làm ở Việt Nam",
   description:
-    "Game mô phỏng 9 học kỳ ngành Kỹ thuật phần mềm (SE) Đại học FPT: cân bằng GPA (Cung) và EXP (Cầu) để chuyển hóa mâu thuẫn, minh họa quy luật thống nhất và đấu tranh của các mặt đối lập.",
+    "Game mô phỏng 9 học kỳ ngành Kỹ thuật phần mềm (SE) Đại học FPT, về mâu thuẫn giữa đào tạo (Cung: GPA) và việc làm (Cầu: EXP) ở Việt Nam: cân bằng hai mặt để chuyển hóa mâu thuẫn, minh họa quy luật thống nhất và đấu tranh của các mặt đối lập.",
 };
 
 export const viewport: Viewport = {

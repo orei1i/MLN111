@@ -2,7 +2,7 @@
   "name": "bon-nam-dai-hoc",
   "version": "1.0.0",
   "private": true,
-  "description": "Bốn Năm Đại Học: Trò Chơi Giải Quyết Mâu Thuẫn – game mô phỏng quy luật mâu thuẫn (triết học Mác – Lênin)",
+  "description": "Cung – Cầu: Mâu thuẫn trong giáo dục đào tạo và việc làm ở Việt Nam – game mô phỏng quy luật mâu thuẫn (triết học Mác – Lênin)",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
